@@ -1,0 +1,20 @@
+
+require "yaml"
+settings = YAML.load_file "settings.yml"
+
+Vagrant.configure("2") do |config|
+  if `uname -m`.strip == "aarch64"
+    config.vm.box = settings["software"]["box"] + "-arm64"
+  else
+    config.vm.box = settings["software"]["box"]
+  end
+  config.vm.box_check_update = true
+
+  config.vm.define "main" do |main|
+    main.vm.hostname = "main"
+    main.vm.provider "virtualbox" do |vb|
+        vb.cpus = settings["nodes"]["main"]["cpu"]
+        vb.memory = settings["nodes"]["main"]["memory"]
+    end
+  end
+end 
